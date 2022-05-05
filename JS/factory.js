@@ -80,3 +80,76 @@ export let deleteAllBtn = elCreator(
   },
   "delete All"
 );
+
+// Creation Window
+
+export let creationWindow = elCreator(
+  "div",
+  {
+    id: "creationWindow",
+    class: "absolute w-full h-full backdrop-blur-md",
+  },
+  elCreator(
+    "form",
+    {
+      class:
+        "w-2/5 m-auto flex flex-col gap-4 bg-green-200 p-8 drop-shadow-2xl",
+    },
+    elCreator("input", {
+      id: "itemTitle",
+      class: "text-lg font-bold p-4",
+      placeholder: "Enter the title",
+    }),
+    elCreator("input", {
+      id: "itemDescription",
+      class: "text-m font-semibold p-4 pb-16",
+      placeholder: "Enter the description",
+    }),
+    elCreator(
+      "div",
+      { class: "flex justify-between" },
+      elCreator(
+        "select",
+        { id: "selectUser" },
+        elCreator("option", { value: "1" }, "select user")
+      ),
+      elCreator(
+        "div",
+        { class: "flex gap-8" },
+        elCreator(
+          "button",
+          { id: "cancel", type: "button", class: "p-2 bg-white" },
+          "Cancel"
+        ),
+        elCreator(
+          "button",
+          { id: "confirm", type: "button", class: "p-2 bg-white" },
+          "Confirm"
+        )
+      )
+    )
+  )
+);
+
+// Warning
+
+export let warning = elCreator(
+  "div",
+  {
+    class: "absolute w-full h-full backdrop-blur-md",
+  },
+  elCreator(
+    "div",
+    { class: "flex gap-8" },
+    elCreator(
+      "button",
+      { id: "cancel", type: "button", class: "p-2 bg-white" },
+      "Cancel"
+    ),
+    elCreator(
+      "button",
+      { id: "confirm", type: "button", class: "p-2 bg-white" },
+      "Confirm"
+    )
+  )
+);
