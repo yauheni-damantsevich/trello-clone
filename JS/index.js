@@ -18,6 +18,8 @@ let cancelBtn = document.querySelector("#cancel");
 let confirmBtn = document.querySelector("confirm");
 let data = [];
 let url = "https://jsonplaceholder.typicode.com/users";
+let dataItem = [];
+let id = 1;
 fetch(url)
   .then((Response) => Response.json())
   .then((data) => {
@@ -42,6 +44,7 @@ function renderUsers(json) {
 addToDoBtn.addEventListener("click", (e) => {
   dialogCreation();
   renderUsers(data);
+  reset();
 });
 
 function dialogCreation() {
@@ -64,6 +67,15 @@ function dialogCreation() {
         cancel();
       } else if (target.id === "confirm") {
         let currentData = currentDataInItem(item);
+        let objCurrentData = Object.assign(...currentData);
+        let label = "todo";
+        objCurrentData.label = label;
+        objCurrentData.date = new Date().toLocaleTimeString();
+        objCurrentData.id = ++id;
+        dataItem.push(objCurrentData);
+        toLocal(dataItem);
+        // render();
+        cancel();
       }
     });
   }
@@ -88,6 +100,61 @@ function currentDataInItem(arr) {
 
   return currentData;
 }
+
+// Local Storage
+
+function reset() {
+  let title = document.getElementById("itemTitle");
+  let description = document.getElementById("itemDescription");
+  let selectUser = document.getElementById("selectUser");
+  let titleValue = title.value;
+  let descriptionValue = description.value;
+  let selectUserValue = selectUser.value;
+  titleValue = "";
+  descriptionValue = "";
+  selectUserValue = 1;
+}
+
+function toLocal(obj) {
+  console.log(obj);
+  // localStorage.setItem("data", JSON.stringify(obj));
+}
+
+// Render
+
+// function render() {
+//   let localData = localStorage.getItem("data");
+//   let arr = JSON.parse(localData);
+//   let columnToDo = document.getElementById("columnToDo");
+//   arr.forEach((element) => {
+//     if (arr.indexOf(element) === arr.length - 1) {
+//       let item = elCreator(
+//         "div",
+//         {},
+//         elCreator(
+//           "div",
+//           { class: "flex" },
+//           elCreator("h3", {}, element.itemTitle),
+//           elCreator("button", { id: "edit" }, "Edit"),
+//           elCreator("button", { id: "delete" }, "Delete")
+//         ),
+//         elCreator(
+//           "div",
+//           { class: "flex" },
+//           elCreator("p", {}, element.itemDescription),
+//           elCreator("button", { id: "change" }, ">")
+//         ),
+//         elCreator(
+//           "div",
+//           { class: "flex" },
+//           elCreator("span", {}, element.selectUser),
+//           elCreator("p", {}, element.date)
+//         )
+//       );
+//       columnToDo.after(item);
+//     }
+//   });
+// }
 
 // Cancel
 

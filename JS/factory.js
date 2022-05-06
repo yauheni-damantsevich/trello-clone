@@ -32,7 +32,7 @@ export let columnToDo = elCreator("div", {
 
 export let columnToDoTitle = elCreator(
   "div",
-  { class: "flex justify-between bg-green-200 p-4" },
+  { id: "columnToDo", class: "flex justify-between bg-green-200 p-4" },
   elCreator("h2", {}, "ToDo"),
   elCreator("span", { id: "count" })
 );
@@ -50,10 +50,15 @@ export let addToDoBtn = elCreator(
 
 export let columnInProgress = elCreator(
   "div",
-  { class: "flex flex-col justify-evenly flex-1	" },
+  {
+    class: "flex flex-col justify-evenly flex-1	",
+  },
   elCreator(
     "div",
-    { class: "flex justify-between bg-gray-200 p-4" },
+    {
+      id: "columnInProgress",
+      class: "flex justify-between bg-gray-200 p-4",
+    },
     elCreator("h2", {}, "In Progress"),
     elCreator("span", { id: "count" })
   )
@@ -67,7 +72,7 @@ export let columnDone = elCreator("div", {
 
 export let columnDoneTitle = elCreator(
   "div",
-  { class: "flex justify-between bg-blue-200 p-4" },
+  { id: "columnDone", class: "flex justify-between bg-blue-200 p-4" },
   elCreator("h2", {}, "Done"),
   elCreator("span", { id: "count" })
 );
