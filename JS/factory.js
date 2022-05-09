@@ -13,13 +13,13 @@ export const elCreator = (type, attributes, ...children) => {
 
 export let title = elCreator(
   "div",
-  { class: "flex p-8 justify-between bg-gray-400" },
+  { class: "flex p-8 justify-between" },
   elCreator("h1", { class: "text-2xl" }, "Trello"),
   elCreator("div", { id: "clock", class: "text-2xl" }, "12:32")
 );
 
 export let main = elCreator("div", {
-  class: "flex p-8 justify-evenly gap-8 bg-gray-100",
+  class: "flex p-8 justify-evenly gap-8",
 });
 
 // Columns
@@ -33,7 +33,7 @@ export let columnToDo = elCreator("div", {
 export let columnToDoTitle = elCreator(
   "div",
   { id: "columnToDo", class: "flex justify-between bg-green-200 p-4" },
-  elCreator("h2", {}, "ToDo"),
+  elCreator("h2", { class: "text-xl" }, "ToDo"),
   elCreator("span", { id: "count" })
 );
 
@@ -59,7 +59,7 @@ export let columnInProgress = elCreator(
       id: "columnInProgress",
       class: "flex justify-between bg-gray-200 p-4",
     },
-    elCreator("h2", {}, "In Progress"),
+    elCreator("h2", { class: "text-xl" }, "In Progress"),
     elCreator("span", { id: "count" })
   )
 );
@@ -73,7 +73,7 @@ export let columnDone = elCreator("div", {
 export let columnDoneTitle = elCreator(
   "div",
   { id: "columnDone", class: "flex justify-between bg-blue-200 p-4" },
-  elCreator("h2", {}, "Done"),
+  elCreator("h2", { class: "text-xl" }, "Done"),
   elCreator("span", { id: "count" })
 );
 
@@ -83,7 +83,7 @@ export let deleteAllBtn = elCreator(
     id: "deleteAllBtn",
     class: "p-4 bg-blue-200",
   },
-  "delete All"
+  "Delete All"
 );
 
 // Creation Window

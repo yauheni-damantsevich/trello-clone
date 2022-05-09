@@ -14,12 +14,11 @@ import {
 } from "./factory";
 
 let root = document.querySelector("#root");
-let cancelBtn = document.querySelector("#cancel");
-let confirmBtn = document.querySelector("confirm");
+let main = document.getElementById("root")[0];
 let data = [];
 let url = "https://jsonplaceholder.typicode.com/users";
 let dataItem = [];
-let id = 1;
+let id = 0;
 fetch(url)
   .then((Response) => Response.json())
   .then((data) => {
@@ -32,11 +31,13 @@ fetch(url)
 
 function renderUsers(json) {
   let selection = document.getElementById("selectUser");
-
-  userData.forEach((el) => {
-    let selectUserFromAPI = elCreator("option", { value: el.id }, el.name);
-    selection.append(selectUserFromAPI);
-  });
+  let options = document.getElementsByTagName("option");
+  if (options.length < 2) {
+    userData.forEach((el) => {
+      let selectUserFromAPI = elCreator("option", { value: el.id }, el.name);
+      selection.append(selectUserFromAPI);
+    });
+  }
 }
 
 // Creation
@@ -52,7 +53,7 @@ function dialogCreation() {
   let creationWindowInHTML = document.getElementById("creationWindow");
   let item = [];
   if (creationWindowInHTML) {
-    creationWindowInHTML.addEventListener("change", (e) => {
+    creationWindowInHTML.addEventListener("change", function ch(e) {
       let target = e.target;
       let targetId = e.target.id;
       let targetValue = e.target.value;
@@ -61,7 +62,7 @@ function dialogCreation() {
       };
       item.unshift(obj);
     });
-    creationWindowInHTML.addEventListener("click", (e) => {
+    creationWindowInHTML.addEventListener("click", function cl(e) {
       let target = e.target;
       if (target.id === "cancel") {
         cancel();
@@ -74,8 +75,9 @@ function dialogCreation() {
         objCurrentData.id = ++id;
         dataItem.push(objCurrentData);
         toLocal(dataItem);
-        // render();
+        render();
         cancel();
+        creationWindowInHTML.removeEventListener("click", cl);
       }
     });
   }
@@ -104,63 +106,99 @@ function currentDataInItem(arr) {
 // Local Storage
 
 function reset() {
-  let title = document.getElementById("itemTitle");
-  let description = document.getElementById("itemDescription");
-  let selectUser = document.getElementById("selectUser");
-  let titleValue = title.value;
-  let descriptionValue = description.value;
-  let selectUserValue = selectUser.value;
-  titleValue = "";
-  descriptionValue = "";
-  selectUserValue = 1;
+  let allInputs = document.querySelectorAll("input");
+  allInputs.forEach((e) => {
+    e.value = "";
+  });
 }
 
 function toLocal(obj) {
-  console.log(obj);
-  // localStorage.setItem("data", JSON.stringify(obj));
+  localStorage.setItem("data", JSON.stringify(obj));
 }
 
 // Render
 
-// function render() {
-//   let localData = localStorage.getItem("data");
-//   let arr = JSON.parse(localData);
-//   let columnToDo = document.getElementById("columnToDo");
-//   arr.forEach((element) => {
-//     if (arr.indexOf(element) === arr.length - 1) {
-//       let item = elCreator(
-//         "div",
-//         {},
-//         elCreator(
-//           "div",
-//           { class: "flex" },
-//           elCreator("h3", {}, element.itemTitle),
-//           elCreator("button", { id: "edit" }, "Edit"),
-//           elCreator("button", { id: "delete" }, "Delete")
-//         ),
-//         elCreator(
-//           "div",
-//           { class: "flex" },
-//           elCreator("p", {}, element.itemDescription),
-//           elCreator("button", { id: "change" }, ">")
-//         ),
-//         elCreator(
-//           "div",
-//           { class: "flex" },
-//           elCreator("span", {}, element.selectUser),
-//           elCreator("p", {}, element.date)
-//         )
-//       );
-//       columnToDo.after(item);
-//     }
-//   });
-// }
+function render() {
+  let localData = localStorage.getItem("data");
+  let arr = JSON.parse(localData);
+  let columnToDo = document.getElementById("columnToDo");
+  let columnInProgress = document.getElementById("columnInProgress");
+  let columnDone = document.getElementById("columnDone");
+  arr.forEach((element) => {
+    if (arr.indexOf(element) === arr.length - 1) {
+      let item = elCreator(
+        "div",
+        { id: element.id, class: "p-2" },
+        elCreator(
+          "div",
+          { class: "flex justify-between mb-2" },
+          elCreator("h3", { class: "text-lg" }, element.itemTitle),
+          elCreator(
+            "div",
+            { class: "flex gap-2" },
+            elCreator("button", { id: "edit", class: "border p-1" }, "Edit"),
+            elCreator("button", { id: "delete", class: "border p-1" }, "Delete")
+          )
+        ),
+        elCreator(
+          "div",
+          { class: "flex justify-between mb-2" },
+          elCreator("p", {}, element.itemDescription),
+          elCreator("button", { id: "change", class: "border p-1" }, ">")
+        ),
+        elCreator(
+          "div",
+          { class: "flex" },
+          elCreator("span", {}, element.selectUser),
+          elCreator("p", {}, element.date)
+        )
+      );
+      if (element.label === "todo") {
+        item.classList.add("bg-green-100");
+        columnToDo.after(item);
+      } else if (element.label === "inProgress") {
+        item.classList.add("bg-gray-100");
+        columnInProgress.after(item);
+      } else if (element.label === "done") {
+        item.classList.add("bg-blue-100");
+        columnDone.after(item);
+      }
+    }
+  });
+}
+
+// Change Column
+
+main.addEventListener("click", (e) => {
+  let localData = localStorage.getItem("data");
+  let arr = JSON.parse(localData);
+  let target = e.target;
+  let itemId = target.parentNode.parentNode.id;
+  let currentItem = target.parentNode.parentNode;
+  if (target.id === "change") {
+    arr.forEach((element, index) => {
+      console.log(itemId);
+      if (itemId == element.id && element.label === "todo") {
+        element.label = "inProgress";
+        currentItem.remove();
+      } else if (itemId == element.id && element.label === "inProgress") {
+        element.label = "done";
+        currentItem.remove();
+      } else if (itemId == element.id && element.label === "done") {
+        element.label = "todo";
+        currentItem.remove();
+      } else null;
+    });
+    toLocal(arr);
+    render();
+  }
+});
 
 // Cancel
 
 function cancel() {
   let creationWindowInHTML = document.getElementById("creationWindow");
-  creationWindowInHTML ? creationWindowInHTML.remove() : null;
+  creationWindowInHTML ? creationWindow.remove() : null;
 }
 
 // Append
