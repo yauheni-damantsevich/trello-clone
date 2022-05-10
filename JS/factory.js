@@ -13,7 +13,7 @@ export const elCreator = (type, attributes, ...children) => {
 
 export let title = elCreator(
   "div",
-  { class: "flex p-8 justify-between" },
+  { class: "flex p-8 justify-between bg-gray-50	" },
   elCreator("h1", { class: "text-2xl" }, "Trello"),
   elCreator("div", { id: "clock", class: "text-2xl" }, "12:32")
 );

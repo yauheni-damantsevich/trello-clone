@@ -169,15 +169,14 @@ function render() {
 
 // Change Column
 
-main.addEventListener("click", (e) => {
+main.addEventListener("click", function changeCol(e) {
   let localData = localStorage.getItem("data");
   let arr = JSON.parse(localData);
   let target = e.target;
   let itemId = target.parentNode.parentNode.id;
   let currentItem = target.parentNode.parentNode;
   if (target.id === "change") {
-    arr.forEach((element, index) => {
-      console.log(itemId);
+    arr.forEach((element) => {
       if (itemId == element.id && element.label === "todo") {
         element.label = "inProgress";
         currentItem.remove();
@@ -191,6 +190,24 @@ main.addEventListener("click", (e) => {
     });
     toLocal(arr);
     render();
+  }
+});
+
+// Delete
+
+main.addEventListener("click", function del(e) {
+  let localData = localStorage.getItem("data");
+  let arr = JSON.parse(localData);
+  let target = e.target;
+  let itemId = target.parentNode.parentNode.parentNode.id;
+  let currentItem = target.parentNode.parentNode.parentNode;
+  if (target.id === "delete") {
+    let filteredArr = arr.filter((element) => {
+      return itemId == element.id;
+    });
+    console.log(filteredArr);
+    // toLocal(arr);
+    // render();
   }
 });
 
