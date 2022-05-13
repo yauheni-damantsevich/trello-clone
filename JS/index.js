@@ -113,6 +113,7 @@ function filterNewItems() {
       e.selectUser = arr[arr.length - 2].selectUser;
     }
   });
+  arr.splice(-2, -1);
   toLocal(arr);
 }
 
@@ -262,6 +263,7 @@ main.addEventListener("click", function dialogEditing(e) {
   let target = e.target;
   if (target.classList.contains("edit")) {
     let itemId = Number(target.parentNode.parentNode.parentNode.id);
+    console.log(itemId);
     let localData = localStorage.getItem("data");
     let arr = JSON.parse(localData);
     let currentItem = target.parentNode.parentNode.parentNode;
@@ -269,20 +271,18 @@ main.addEventListener("click", function dialogEditing(e) {
     let iteratedArr = arr.forEach((el, i) => {
       if (el.id === itemId) {
         tempArr.push(el);
+        console.log("YESS");
       }
     });
     let creationWindowInHTML = document.getElementById("creationWindow");
     dialogCreation();
-    if (creationWindowInHTML) {
-      let form = document.getElementsByTagName("form");
-      let currentTitle = document.getElementById("itemTitle");
-      let currentDescription = document.getElementById("itemDescription");
-      let currentSelectUser = document.getElementById("selectUser");
-      currentTitle.value = tempArr[0].itemTite;
-      currentDescription.value = tempArr[0].itemDescription;
-      currentSelectUser.value = tempArr[0].selectUser;
-      render();
-    }
+    let form = document.getElementsByTagName("form");
+    let currentTitle = document.getElementById("itemTitle");
+    let currentDescription = document.getElementById("itemDescription");
+    let currentSelectUser = document.getElementById("selectUser");
+    currentTitle.value = tempArr[0].itemTitle;
+    currentDescription.value = tempArr[0].itemDescription;
+    currentSelectUser.value = tempArr[0].selectUser;
   }
 });
 
