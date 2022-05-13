@@ -14,11 +14,11 @@ import {
 } from "./factory";
 
 let root = document.querySelector("#root");
-let main = document.getElementById("root")[0];
 let data = [];
 let url = "https://jsonplaceholder.typicode.com/users";
 let dataItem = [];
 let id = 0;
+let userData;
 fetch(url)
   .then((Response) => Response.json())
   .then((data) => {
@@ -53,7 +53,7 @@ function dialogCreation() {
   let creationWindowInHTML = document.getElementById("creationWindow");
   let item = [];
   if (creationWindowInHTML) {
-    creationWindowInHTML.addEventListener("change", function ch(e) {
+    creationWindowInHTML.addEventListener("click", function ch(e) {
       let target = e.target;
       let targetId = e.target.id;
       let targetValue = e.target.value;
@@ -61,23 +61,34 @@ function dialogCreation() {
         [targetId]: targetValue,
       };
       item.unshift(obj);
+      console.log(e);
     });
     creationWindowInHTML.addEventListener("click", function cl(e) {
       let target = e.target;
       if (target.id === "cancel") {
         cancel();
       } else if (target.id === "confirm") {
+        let localData = localStorage.getItem("data");
+        let arr = JSON.parse(localData);
         let currentData = currentDataInItem(item);
-        let objCurrentData = Object.assign(...currentData);
         let label = "todo";
-        objCurrentData.label = label;
-        objCurrentData.date = new Date().toLocaleTimeString();
-        objCurrentData.id = ++id;
-        dataItem.push(objCurrentData);
-        toLocal(dataItem);
-        render();
-        cancel();
-        creationWindowInHTML.removeEventListener("click", cl);
+        if (currentData.length > 0) {
+          let objCurrentData = Object.assign(...currentData);
+          objCurrentData.label = label;
+          objCurrentData.date = new Date().toLocaleTimeString();
+          objCurrentData.id = ++id;
+          dataItem.push(objCurrentData);
+          toLocal(dataItem);
+          render();
+          cancel();
+          renderUsersInMain();
+          creationWindowInHTML.removeEventListener("click", cl);
+        } else if (currentData.length === 0 && arr.length > 0) {
+          cancel();
+          creationWindowInHTML.removeEventListener("click", cl);
+        } else {
+          cancel();
+        }
       }
     });
   }
@@ -85,10 +96,10 @@ function dialogCreation() {
 
 function currentDataInItem(arr) {
   let arrForTitle = [...arr];
-  let arrForDescripion = [...arr];
+  let arrForDescription = [...arr];
   let arrForSelect = [...arr];
   let currentDataTitle = arrForTitle.filter((el) => el.itemTitle);
-  let currentDataDescription = arrForDescripion.filter(
+  let currentDataDescription = arrForDescription.filter(
     (el) => el.itemDescription
   );
   let currentDataSelect = arrForSelect.filter((el) => el.selectUser);
@@ -136,20 +147,20 @@ function render() {
           elCreator(
             "div",
             { class: "flex gap-2" },
-            elCreator("button", { id: "edit", class: "border p-1" }, "Edit"),
-            elCreator("button", { id: "delete", class: "border p-1" }, "Delete")
+            elCreator("button", { class: "edit border p-1" }, "Edit"),
+            elCreator("button", { class: "delete border p-1" }, "Delete")
           )
         ),
         elCreator(
           "div",
           { class: "flex justify-between mb-2" },
           elCreator("p", {}, element.itemDescription),
-          elCreator("button", { id: "change", class: "border p-1" }, ">")
+          elCreator("button", { class: "change border p-1" }, ">")
         ),
         elCreator(
           "div",
-          { class: "flex" },
-          elCreator("span", {}, element.selectUser),
+          { class: "flex justify-between" },
+          elCreator("span", { class: "users" }, element.selectUser),
           elCreator("p", {}, element.date)
         )
       );
@@ -175,7 +186,7 @@ main.addEventListener("click", function changeCol(e) {
   let target = e.target;
   let itemId = target.parentNode.parentNode.id;
   let currentItem = target.parentNode.parentNode;
-  if (target.id === "change") {
+  if (target.classList.contains("change")) {
     arr.forEach((element) => {
       if (itemId == element.id && element.label === "todo") {
         element.label = "inProgress";
@@ -190,26 +201,73 @@ main.addEventListener("click", function changeCol(e) {
     });
     toLocal(arr);
     render();
+    renderUsersInMain();
   }
 });
+
+// Render Users
+
+function renderUsersInMain() {
+  let users = document.querySelector(".users");
+  userData.forEach((e) => {
+    if (Number(users.innerText) === e.id) {
+      users.innerText = e.name;
+    }
+  });
+}
 
 // Delete
 
 main.addEventListener("click", function del(e) {
-  let localData = localStorage.getItem("data");
-  let arr = JSON.parse(localData);
   let target = e.target;
-  let itemId = target.parentNode.parentNode.parentNode.id;
-  let currentItem = target.parentNode.parentNode.parentNode;
-  if (target.id === "delete") {
+  if (target.classList.contains("delete")) {
+    let localData = localStorage.getItem("data");
+    let arr = JSON.parse(localData);
+    let currentItem = target.parentNode.parentNode.parentNode;
+    let itemId = Number(target.parentNode.parentNode.parentNode.id);
     let filteredArr = arr.filter((element) => {
-      return itemId == element.id;
+      return itemId !== element.id;
     });
-    console.log(filteredArr);
-    // toLocal(arr);
-    // render();
+    currentItem.remove();
+    localStorage.clear(data);
+    toLocal(filteredArr);
   }
 });
+
+//Dialog Editing
+
+main.addEventListener("click", function dialogEditing(e) {
+  let target = e.target;
+  if (target.classList.contains("edit")) {
+    let itemId = Number(target.parentNode.parentNode.parentNode.id);
+    let localData = localStorage.getItem("data");
+    let arr = JSON.parse(localData);
+    let tempArr = [];
+    let iteratedArr = arr.forEach((el, i) => {
+      if (el.id === itemId) {
+        tempArr.push(el);
+      }
+    });
+    let creationWindowInHTML = document.getElementById("creationWindow");
+    dialogCreation();
+    if (creationWindowInHTML) {
+      let form = document.getElementsByTagName("form");
+      let currentTitle = document.getElementById("itemTitle");
+      let currentDescription = document.getElementById("itemDescription");
+      let currentSelectUser = document.getElementById("selectUser");
+      currentTitle.value = tempArr[0].itemTite;
+      currentDescription.value = tempArr[0].itemDescription;
+      currentSelectUser.value = tempArr[0].selectUser;
+    }
+  }
+});
+
+function deleteOldItem() {
+  let localData = localStorage.getItem("data");
+  let arr = JSON.parse(localData);
+  arr.pop();
+  console.log(arr);
+}
 
 // Cancel
 

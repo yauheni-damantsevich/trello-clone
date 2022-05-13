@@ -3,11 +3,14 @@ export const elCreator = (type, attributes, ...children) => {
   for (const key in attributes) {
     el.setAttribute(key, attributes[key]);
   }
-  children.forEach((child) =>
-    typeof child === "string"
-      ? el.appendChild(document.createTextNode(child))
-      : el.appendChild(child)
-  );
+  children.forEach((child) => {
+    if (typeof child === "string") {
+      el.appendChild(document.createTextNode(child));
+    } else if (child == undefined) null;
+    else {
+      el.appendChild(child);
+    }
+  });
   return el;
 };
 
@@ -34,7 +37,7 @@ export let columnToDoTitle = elCreator(
   "div",
   { id: "columnToDo", class: "flex justify-between bg-green-200 p-4" },
   elCreator("h2", { class: "text-xl" }, "ToDo"),
-  elCreator("span", { id: "count" })
+  elCreator("span", { class: "count" })
 );
 
 export let addToDoBtn = elCreator(
@@ -60,7 +63,7 @@ export let columnInProgress = elCreator(
       class: "flex justify-between bg-gray-200 p-4",
     },
     elCreator("h2", { class: "text-xl" }, "In Progress"),
-    elCreator("span", { id: "count" })
+    elCreator("span", { class: "count" })
   )
 );
 
@@ -74,7 +77,7 @@ export let columnDoneTitle = elCreator(
   "div",
   { id: "columnDone", class: "flex justify-between bg-blue-200 p-4" },
   elCreator("h2", { class: "text-xl" }, "Done"),
-  elCreator("span", { id: "count" })
+  elCreator("span", { class: "count" })
 );
 
 export let deleteAllBtn = elCreator(
