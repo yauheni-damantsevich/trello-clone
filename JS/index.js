@@ -53,7 +53,7 @@ function dialogCreation() {
   let creationWindowInHTML = document.getElementById("creationWindow");
   let item = [];
   if (creationWindowInHTML) {
-    creationWindowInHTML.addEventListener("click", function ch(e) {
+    creationWindowInHTML.addEventListener("change", function ch(e) {
       let target = e.target;
       let targetId = e.target.id;
       let targetValue = e.target.value;
@@ -61,7 +61,6 @@ function dialogCreation() {
         [targetId]: targetValue,
       };
       item.unshift(obj);
-      console.log(e);
     });
     creationWindowInHTML.addEventListener("click", function cl(e) {
       let target = e.target;
@@ -79,19 +78,42 @@ function dialogCreation() {
           objCurrentData.id = ++id;
           dataItem.push(objCurrentData);
           toLocal(dataItem);
+          filterNewItems();
           render();
           cancel();
           renderUsersInMain();
           creationWindowInHTML.removeEventListener("click", cl);
         } else if (currentData.length === 0 && arr.length > 0) {
+          filterNewItems();
+          render();
           cancel();
+          renderUsersInMain();
           creationWindowInHTML.removeEventListener("click", cl);
         } else {
+          filterNewItems();
+          render();
           cancel();
+          renderUsersInMain();
+          creationWindowInHTML.removeEventListener("click", cl);
         }
       }
     });
   }
+}
+
+function filterNewItems() {
+  let localData = localStorage.getItem("data");
+  let arr = JSON.parse(localData);
+  arr.forEach((e) => {
+    if (e.itemTitle === undefined) {
+      e.itemTitle = arr[arr.length - 2].itemTitle;
+    } else if (e.itemDescription === undefined) {
+      e.itemDescription = arr[arr.length - 2].itemDescription;
+    } else if (e.selectUser === undefined) {
+      e.selectUser = arr[arr.length - 2].selectUser;
+    }
+  });
+  toLocal(arr);
 }
 
 function currentDataInItem(arr) {
@@ -242,6 +264,7 @@ main.addEventListener("click", function dialogEditing(e) {
     let itemId = Number(target.parentNode.parentNode.parentNode.id);
     let localData = localStorage.getItem("data");
     let arr = JSON.parse(localData);
+    let currentItem = target.parentNode.parentNode.parentNode;
     let tempArr = [];
     let iteratedArr = arr.forEach((el, i) => {
       if (el.id === itemId) {
@@ -258,16 +281,10 @@ main.addEventListener("click", function dialogEditing(e) {
       currentTitle.value = tempArr[0].itemTite;
       currentDescription.value = tempArr[0].itemDescription;
       currentSelectUser.value = tempArr[0].selectUser;
+      render();
     }
   }
 });
-
-function deleteOldItem() {
-  let localData = localStorage.getItem("data");
-  let arr = JSON.parse(localData);
-  arr.pop();
-  console.log(arr);
-}
 
 // Cancel
 
