@@ -71,25 +71,28 @@ function dialogCreation() {
         let arr = JSON.parse(localData);
         let currentData = currentDataInItem(item);
         let label = "todo";
-        if (currentData.length > 0) {
+        if (currentData.length > 0 && arr.length > 0) {
           let objCurrentData = Object.assign(...currentData);
           objCurrentData.label = label;
           objCurrentData.date = new Date().toLocaleTimeString();
           objCurrentData.id = ++id;
           dataItem.push(objCurrentData);
-          toLocal(dataItem);
+          // toLocal(dataItem);
+          deleteOldItem();
           filterNewItems();
           render();
           cancel();
           renderUsersInMain();
           creationWindowInHTML.removeEventListener("click", cl);
         } else if (currentData.length === 0 && arr.length > 0) {
+          deleteOldItem();
           filterNewItems();
           render();
           cancel();
           renderUsersInMain();
           creationWindowInHTML.removeEventListener("click", cl);
         } else {
+          toLocal(dataItem);
           filterNewItems();
           render();
           cancel();
@@ -99,6 +102,12 @@ function dialogCreation() {
       }
     });
   }
+}
+
+function deleteOldItem() {
+  let localData = localStorage.getItem("data");
+  let arr = JSON.parse(localData);
+  arr.pop();
 }
 
 function filterNewItems() {
@@ -162,7 +171,7 @@ function render() {
     if (arr.indexOf(element) === arr.length - 1) {
       let item = elCreator(
         "div",
-        { id: element.id, class: "p-2" },
+        { id: element.id, class: "p-2 mb-2" },
         elCreator(
           "div",
           { class: "flex justify-between mb-2" },
@@ -283,6 +292,7 @@ main.addEventListener("click", function dialogEditing(e) {
     currentTitle.value = tempArr[0].itemTitle;
     currentDescription.value = tempArr[0].itemDescription;
     currentSelectUser.value = tempArr[0].selectUser;
+    currentItem.remove();
   }
 });
 
