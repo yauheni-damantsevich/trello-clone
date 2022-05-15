@@ -99,22 +99,22 @@ export let creationWindow = elCreator(
   "div",
   {
     id: "creationWindow",
-    class: "absolute w-full h-full backdrop-blur-md",
+    class: "absolute w-full h-full backdrop-blur-md top-0",
   },
   elCreator(
     "form",
     {
       class:
-        "w-2/5 m-auto flex flex-col gap-4 bg-green-200 p-8 drop-shadow-2xl",
+        "w-2/5 mx-auto mt-8 flex flex-col gap-4 bg-green-200 p-8 rounded-lg drop-shadow-2xl",
     },
     elCreator("input", {
       id: "itemTitle",
-      class: "text-lg font-bold p-4",
+      class: "text-lg font-bold p-4 rounded-lg shadow-inner",
       placeholder: "Enter the title",
     }),
     elCreator("input", {
       id: "itemDescription",
-      class: "text-m font-semibold p-4 pb-16",
+      class: "text-m font-semibold p-4 pb-16 rounded-lg shadow-inner",
       placeholder: "Enter the description",
     }),
     elCreator(
@@ -122,7 +122,7 @@ export let creationWindow = elCreator(
       { class: "flex justify-between" },
       elCreator(
         "select",
-        { id: "selectUser" },
+        { id: "selectUser", class: "rounded-lg" },
         elCreator("option", { value: "1" }, "select user")
       ),
       elCreator(
@@ -130,12 +130,20 @@ export let creationWindow = elCreator(
         { class: "flex gap-8" },
         elCreator(
           "button",
-          { id: "cancel", type: "button", class: "p-2 bg-white" },
+          {
+            id: "cancel",
+            type: "button",
+            class: "p-2 bg-white rounded-lg drop-shadow-md",
+          },
           "Cancel"
         ),
         elCreator(
           "button",
-          { id: "confirm", type: "button", class: "p-2 bg-white" },
+          {
+            id: "confirm",
+            type: "button",
+            class: "p-2 bg-white rounded-lg drop-shadow-md",
+          },
           "Confirm"
         )
       )

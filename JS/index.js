@@ -55,7 +55,7 @@ addToDoBtn.addEventListener("click", (e) => {
 });
 
 function dialogCreation() {
-  root.prepend(creationWindow);
+  main.after(creationWindow);
   let creationWindowInHTML = document.getElementById("creationWindow");
   let item = [];
   if (creationWindowInHTML) {
