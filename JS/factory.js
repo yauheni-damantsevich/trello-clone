@@ -30,7 +30,9 @@ export let main = elCreator("div", {
 // 1
 
 export let columnToDo = elCreator("div", {
-  class: "flex flex-col justify-evenly flex-1",
+  class:
+    "flex flex-col justify-start flex-1 bg-green-200 drop-shadow-xl p-2 rounded-lg" +
+    "\n",
 });
 
 export let columnToDoTitle = elCreator(
@@ -44,7 +46,7 @@ export let addToDoBtn = elCreator(
   "button",
   {
     id: "addToDoBtn",
-    class: "p-4 bg-green-200",
+    class: "mt-auto p-4 bg-green-200 rounded-lg drop-shadow-md",
   },
   "Add ToDo"
 );
@@ -54,7 +56,8 @@ export let addToDoBtn = elCreator(
 export let columnInProgress = elCreator(
   "div",
   {
-    class: "flex flex-col justify-evenly flex-1	",
+    class:
+      "flex flex-col justify-start flex-1 bg-gray-200 drop-shadow-xl p-2 rounded-lg",
   },
   elCreator(
     "div",
@@ -70,7 +73,8 @@ export let columnInProgress = elCreator(
 // 3
 
 export let columnDone = elCreator("div", {
-  class: "flex flex-col justify-evenly flex-1	",
+  class:
+    "flex flex-col justify-start flex-1 bg-blue-200 drop-shadow-xl p-2 rounded-lg",
 });
 
 export let columnDoneTitle = elCreator(
@@ -84,7 +88,7 @@ export let deleteAllBtn = elCreator(
   "button",
   {
     id: "deleteAllBtn",
-    class: "p-4 bg-blue-200",
+    class: "mt-auto p-4 bg-blue-200 rounded-lg drop-shadow-md",
   },
   "Delete All"
 );

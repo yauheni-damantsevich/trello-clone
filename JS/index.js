@@ -168,7 +168,7 @@ function render() {
     if (arr.indexOf(element) === arr.length - 1) {
       let item = elCreator(
         "div",
-        { id: element.id, class: "p-2 mb-2" },
+        { id: element.id, class: "p-2 mb-2 rounded-lg " },
         elCreator(
           "div",
           { class: "flex justify-between mb-2" },
@@ -176,15 +176,23 @@ function render() {
           elCreator(
             "div",
             { class: "flex gap-2" },
-            elCreator("button", { class: "edit border p-1" }, "Edit"),
-            elCreator("button", { class: "delete border p-1" }, "Delete")
+            elCreator(
+              "button",
+              { class: "edit border p-1 rounded-lg" },
+              "Edit"
+            ),
+            elCreator(
+              "button",
+              { class: "delete border p-1 rounded-lg" },
+              "Delete"
+            )
           )
         ),
         elCreator(
           "div",
           { class: "flex justify-between mb-2" },
           elCreator("p", {}, element.itemDescription),
-          elCreator("button", { class: "change border p-1" }, ">")
+          elCreator("button", { class: "change border p-1 rounded-lg" }, ">")
         ),
         elCreator(
           "div",
