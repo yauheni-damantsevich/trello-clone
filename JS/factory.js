@@ -16,7 +16,7 @@ export const elCreator = (type, attributes, ...children) => {
 
 export let title = elCreator(
   "div",
-  { class: "flex p-8 justify-between bg-gray-50	" },
+  { class: "flex p-8 justify-between bg-gray-50	rounded-lg" },
   elCreator("h1", { class: "text-2xl" }, "Trello"),
   elCreator("div", { id: "clock", class: "text-2xl" }, "12:32")
 );
@@ -31,8 +31,7 @@ export let main = elCreator("div", {
 
 export let columnToDo = elCreator("div", {
   class:
-    "flex flex-col justify-start flex-1 bg-green-200 drop-shadow-xl p-2 rounded-lg" +
-    "\n",
+    "flex flex-col justify-start flex-1 bg-green-200 drop-shadow-xl p-2 rounded-lg",
 });
 
 export let columnToDoTitle = elCreator(
