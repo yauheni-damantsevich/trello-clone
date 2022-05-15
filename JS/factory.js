@@ -38,7 +38,7 @@ export let columnToDoTitle = elCreator(
   "div",
   { id: "columnToDo", class: "flex justify-between bg-green-200 mb-2 p-4" },
   elCreator("h2", { class: "text-xl" }, "ToDo"),
-  elCreator("span", { class: "count" })
+  elCreator("span", { id: "todoCount", class: "count" })
 );
 
 export let addToDoBtn = elCreator(
@@ -65,7 +65,7 @@ export let columnInProgress = elCreator(
       class: "flex justify-between bg-gray-200 mb-2  p-4",
     },
     elCreator("h2", { class: "text-xl" }, "In Progress"),
-    elCreator("span", { class: "count" })
+    elCreator("span", { id: "inProgressCount", class: "count" })
   )
 );
 
@@ -80,7 +80,7 @@ export let columnDoneTitle = elCreator(
   "div",
   { id: "columnDone", class: "flex justify-between bg-blue-200 mb-2 p-4" },
   elCreator("h2", { class: "text-xl" }, "Done"),
-  elCreator("span", { class: "count" })
+  elCreator("span", { id: "doneCount", class: "count" })
 );
 
 export let deleteAllBtn = elCreator(

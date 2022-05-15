@@ -43,7 +43,8 @@ function renderUsers(json) {
 // Window
 
 window.addEventListener("load", (event) => {
-  render();
+  renderAll();
+  countInCol();
 });
 
 // Creation
@@ -77,29 +78,32 @@ function dialogCreation() {
         let arr = JSON.parse(localData);
         let currentData = currentDataInItem(item);
         let label = "todo";
-        if (currentData.length > 0) {
+        if (currentData.length > 0 && arr && arr.length > 0) {
+          filterNewItems();
+          render();
+          cancel();
+          renderUsersInMain();
+          countInCol();
+          creationWindowInHTML.removeEventListener("click", cl);
+        } else if (currentData.length === 0 && arr && arr.length > 0) {
+          filterNewItems();
+          render();
+          cancel();
+          renderUsersInMain();
+          countInCol();
+          creationWindowInHTML.removeEventListener("click", cl);
+        } else {
           let objCurrentData = Object.assign(...currentData);
           objCurrentData.label = label;
           objCurrentData.date = new Date().toLocaleTimeString();
           objCurrentData.id = ++id;
           dataItem.push(objCurrentData);
           toLocal(dataItem);
-          filterNewItems();
+          // filterNewItems();
           render();
           cancel();
           renderUsersInMain();
-          creationWindowInHTML.removeEventListener("click", cl);
-        } else if (currentData.length === 0 && arr.length > 0) {
-          filterNewItems();
-          render();
-          cancel();
-          renderUsersInMain();
-          creationWindowInHTML.removeEventListener("click", cl);
-        } else {
-          filterNewItems();
-          render();
-          cancel();
-          renderUsersInMain();
+          countInCol();
           creationWindowInHTML.removeEventListener("click", cl);
         }
       }
@@ -119,7 +123,7 @@ function filterNewItems() {
       e.selectUser = arr[arr.length - 2].selectUser;
     }
   });
-  arr.length > 1 ? arr.splice(-2, 1) : null;
+  arr.length > 0 ? arr.splice(-2, 1) : null;
   toLocal(arr);
 }
 
@@ -215,6 +219,85 @@ function render() {
   });
 }
 
+function renderAll() {
+  let localData = localStorage.getItem("data");
+  let arr = JSON.parse(localData);
+  let columnToDo = document.getElementById("columnToDo");
+  let columnInProgress = document.getElementById("columnInProgress");
+  let columnDone = document.getElementById("columnDone");
+  arr.forEach((element) => {
+    let item = elCreator(
+      "div",
+      { id: element.id, class: "p-2 mb-2 rounded-lg " },
+      elCreator(
+        "div",
+        { class: "flex justify-between mb-2" },
+        elCreator("h3", { class: "text-lg" }, element.itemTitle),
+        elCreator(
+          "div",
+          { class: "flex gap-2" },
+          elCreator("button", { class: "edit border p-1 rounded-lg" }, "Edit"),
+          elCreator(
+            "button",
+            { class: "delete border p-1 rounded-lg" },
+            "Delete"
+          )
+        )
+      ),
+      elCreator(
+        "div",
+        { class: "flex justify-between mb-2" },
+        elCreator("p", {}, element.itemDescription),
+        elCreator("button", { class: "change border p-1 rounded-lg" }, ">")
+      ),
+      elCreator(
+        "div",
+        { class: "flex justify-between" },
+        elCreator("span", { class: "users" }, element.selectUser),
+        elCreator("p", {}, element.date)
+      )
+    );
+    if (element.label === "todo") {
+      item.classList.add("bg-green-100");
+      columnToDo.after(item);
+    } else if (element.label === "inProgress") {
+      item.classList.add("bg-gray-100");
+      columnInProgress.after(item);
+    } else if (element.label === "done") {
+      item.classList.add("bg-blue-100");
+      columnDone.after(item);
+    }
+  });
+}
+
+// Count
+
+function countInCol() {
+  let localData = localStorage.getItem("data");
+  let arr = JSON.parse(localData);
+  let objCount = { todoCount: 0, inProgressCount: 0, doneCount: 0 };
+  let todoSpan = document.getElementById("todoCount");
+  let inProgressSpan = document.getElementById("inProgressCount");
+  let doneSpan = document.getElementById("doneCount");
+  let todoCount = 0;
+  let inProgressCount = 0;
+  let doneCount = 0;
+  let filteredAllItems = arr.filter((el) => {
+    if (el.id > 0) {
+      if (el.label === "todo") {
+        todoCount++;
+      } else if (el.label === "inProgress") {
+        inProgressCount++;
+      } else if (el.label === "done") {
+        doneCount++;
+      }
+    }
+  });
+  todoSpan.innerText = todoCount;
+  inProgressSpan.innerText = inProgressCount;
+  doneSpan.innerText = doneCount;
+}
+
 // Change Column
 
 main.addEventListener("click", function changeCol(e) {
@@ -239,6 +322,7 @@ main.addEventListener("click", function changeCol(e) {
     toLocal(arr);
     render();
     renderUsersInMain();
+    countInCol();
   }
 });
 
@@ -246,11 +330,13 @@ main.addEventListener("click", function changeCol(e) {
 
 function renderUsersInMain() {
   let users = document.querySelector(".users");
-  userData.forEach((e) => {
-    if (Number(users.innerText) === e.id) {
-      users.innerText = e.name;
-    }
-  });
+  if (users) {
+    userData.forEach((e) => {
+      if (Number(users.innerText) === e.id) {
+        users.innerText = e.name;
+      }
+    });
+  }
 }
 
 // Delete
@@ -268,6 +354,7 @@ main.addEventListener("click", function del(e) {
     currentItem.remove();
     localStorage.clear(data);
     toLocal(filteredArr);
+    countInCol();
   }
 });
 
