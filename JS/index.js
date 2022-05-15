@@ -40,6 +40,12 @@ function renderUsers(json) {
   }
 }
 
+// Window
+
+window.addEventListener("load", (event) => {
+  render();
+});
+
 // Creation
 
 addToDoBtn.addEventListener("click", (e) => {
@@ -113,7 +119,7 @@ function filterNewItems() {
       e.selectUser = arr[arr.length - 2].selectUser;
     }
   });
-  arr.splice(-2, -1);
+  arr.length > 1 ? arr.splice(-2, 1) : null;
   toLocal(arr);
 }
 
@@ -162,7 +168,7 @@ function render() {
     if (arr.indexOf(element) === arr.length - 1) {
       let item = elCreator(
         "div",
-        { id: element.id, class: "p-2" },
+        { id: element.id, class: "p-2 mb-2" },
         elCreator(
           "div",
           { class: "flex justify-between mb-2" },
@@ -283,6 +289,7 @@ main.addEventListener("click", function dialogEditing(e) {
     currentTitle.value = tempArr[0].itemTitle;
     currentDescription.value = tempArr[0].itemDescription;
     currentSelectUser.value = tempArr[0].selectUser;
+    currentItem.remove();
   }
 });
 
