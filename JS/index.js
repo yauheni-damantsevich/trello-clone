@@ -12,6 +12,7 @@ import {
   creationWindow,
   warning,
 } from "./factory";
+import log from "tailwindcss/lib/util/log";
 
 let root = document.querySelector("#root");
 let data = [];
@@ -31,7 +32,7 @@ fetch(url)
 
 function renderUsers(json) {
   let selection = document.getElementById("selectUser");
-  let options = document.getElementsByTagName("option");
+  let options = selection.childNodes;
   if (options.length < 2) {
     userData.forEach((el) => {
       let selectUserFromAPI = elCreator("option", { value: el.id }, el.name);
@@ -67,84 +68,122 @@ function dialogCreation() {
       let obj = {
         [targetId]: targetValue,
       };
-      item.unshift(obj);
+      item.push(obj);
     });
     creationWindowInHTML.addEventListener("click", function cl(e) {
       let target = e.target;
       if (target.id === "cancel") {
+        console.log("cancel");
         cancel();
+        render();
+        renderUsersInMain();
+        countInCol();
       } else if (target.id === "confirm") {
         let localData = localStorage.getItem("data");
         let arr = JSON.parse(localData);
         let currentData = currentDataInItem(item);
-        let label = "todo";
-        if (currentData.length > 0 && arr && arr.length > 0) {
-          filterNewItems();
-          render();
-          cancel();
-          renderUsersInMain();
-          countInCol();
-          creationWindowInHTML.removeEventListener("click", cl);
-        } else if (currentData.length === 0 && arr && arr.length > 0) {
-          filterNewItems();
-          render();
-          cancel();
-          renderUsersInMain();
-          countInCol();
-          creationWindowInHTML.removeEventListener("click", cl);
-        } else {
+        if (currentData.length > 0 && arr && arr.length === 0) {
           let objCurrentData = Object.assign(...currentData);
-          objCurrentData.label = label;
           objCurrentData.date = new Date().toLocaleTimeString();
           objCurrentData.id = ++id;
           dataItem.push(objCurrentData);
           toLocal(dataItem);
-          // filterNewItems();
-          render();
-          cancel();
-          renderUsersInMain();
-          countInCol();
-          creationWindowInHTML.removeEventListener("click", cl);
+        } else if (currentData.length === 0 && arr && arr.length > 0) {
+          console.log("No data");
+        } else if (currentData.length > 0 && arr && arr.length > 0) {
+          let objCurrentData = Object.assign(...currentData);
+          objCurrentData.date = new Date().toLocaleTimeString();
+          objCurrentData.id = ++id;
+          objCurrentData.label = "todo";
+          dataItem.push(objCurrentData);
+          toLocal(dataItem);
+          toLocal(filterNewItems());
+          toLocal(duplicateFix());
+          console.log("Changes");
+        } else {
+          console.log("First");
+          let objCurrentData = Object.assign(...currentData);
+          objCurrentData.date = new Date().toLocaleTimeString();
+          objCurrentData.id = ++id;
+          dataItem.push(objCurrentData);
+          toLocal(dataItem);
         }
+        render();
+        cancel();
+        renderUsersInMain();
+        countInCol();
+        creationWindowInHTML.removeEventListener("click", cl);
       }
     });
   }
 }
 
+function duplicateFix() {
+  let localData = localStorage.getItem("data");
+  let arr = JSON.parse(localData);
+  let newArr = arr.splice(-2, 1);
+  console.log(newArr);
+  return newArr;
+}
+
 function filterNewItems() {
   let localData = localStorage.getItem("data");
   let arr = JSON.parse(localData);
-  arr.forEach((e) => {
-    if (e.itemTitle === undefined) {
-      e.itemTitle = arr[arr.length - 2].itemTitle;
-    } else if (e.itemDescription === undefined) {
-      e.itemDescription = arr[arr.length - 2].itemDescription;
-    } else if (e.selectUser === undefined) {
-      e.selectUser = arr[arr.length - 2].selectUser;
-    }
-  });
-  arr.length > 0 ? arr.splice(-2, 1) : null;
-  toLocal(arr);
+  console.log(arr);
+  let inputLabel = document.getElementById("label").value;
+  if (arr) {
+    arr.forEach((e) => {
+      if (e.itemTitle === undefined) {
+        e.itemTitle = arr[arr.length - 2].itemTitle;
+      }
+      if (e.itemDescription === undefined) {
+        e.itemDescription = arr[arr.length - 2].itemDescription;
+      }
+      if (e.selectUser === undefined) {
+        e.selectUser = arr[arr.length - 2].selectUser;
+      }
+      if (e.label !== undefined) {
+        e.label = inputLabel;
+      }
+    });
+  }
+  return arr;
 }
 
 function currentDataInItem(arr) {
-  let arrForTitle = [...arr];
   let arrForDescription = [...arr];
+  let arrForTitle = [...arr];
   let arrForSelect = [...arr];
+  let arrForLabel = [...arr];
   let currentDataTitle = arrForTitle.filter((el) => el.itemTitle);
   let currentDataDescription = arrForDescription.filter(
     (el) => el.itemDescription
   );
   let currentDataSelect = arrForSelect.filter((el) => el.selectUser);
-  let cropCurrentDataTitle = currentDataTitle.slice(0, 1);
-  let cropCurrentDataDescription = currentDataDescription.slice(0, 1);
-  let cropCurrentDataSelect = currentDataSelect.slice(0, 1);
-  let currentData = cropCurrentDataTitle.concat(
-    cropCurrentDataDescription,
-    cropCurrentDataSelect
+  let currentDataLabel = arrForLabel.filter((el) => el.label);
+  let cropCurrentDataTitle = currentDataTitle.slice(
+    -1,
+    currentDataTitle.length
   );
-
-  return currentData;
+  let cropCurrentDataDescription = currentDataDescription.slice(
+    -1,
+    currentDataDescription.length
+  );
+  let cropCurrentDataSelect = currentDataSelect.slice(
+    -1,
+    currentDataSelect.length
+  );
+  let cropCurrentDataLabel = currentDataLabel.slice(
+    -1,
+    currentDataLabel.length
+  );
+  let result = [
+    ...cropCurrentDataTitle,
+    ...cropCurrentDataDescription,
+    ...cropCurrentDataSelect,
+    ...cropCurrentDataLabel,
+  ];
+  return result;
 }
 
 // Local Storage
@@ -364,15 +403,19 @@ main.addEventListener("click", function dialogEditing(e) {
   let target = e.target;
   if (target.classList.contains("edit")) {
     let itemId = Number(target.parentNode.parentNode.parentNode.id);
-    console.log(itemId);
     let localData = localStorage.getItem("data");
     let arr = JSON.parse(localData);
     let currentItem = target.parentNode.parentNode.parentNode;
     let tempArr = [];
+    let arrForLocal = [];
+
+    //вот здесь ошибка заменяю список одним изменяемым айтемом ток а надо пушить изменямый айтем в конец
+
     let iteratedArr = arr.forEach((el, i) => {
       if (el.id === itemId) {
         tempArr.push(el);
-        console.log("YESS");
+      } else {
+        arrForLocal.push(el);
       }
     });
     let creationWindowInHTML = document.getElementById("creationWindow");
