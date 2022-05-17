@@ -122,7 +122,15 @@ export let creationWindow = elCreator(
       elCreator(
         "select",
         { id: "selectUser", class: "rounded-lg" },
-        elCreator("option", { value: "1" }, "select user")
+        elCreator("option", { value: " " }, "select user")
+      ),
+      elCreator(
+        "select",
+        { id: "label", class: "rounded-lg" },
+        elCreator("option", { value: " " }, "Select Label"),
+        elCreator("option", { value: "todo" }, "To Do"),
+        elCreator("option", { value: "inProgress" }, "In Progress"),
+        elCreator("option", { value: "done" }, "Done")
       ),
       elCreator(
         "div",
