@@ -53,7 +53,7 @@ main.addEventListener("click", function changeCol(e) {
       } else if (itemId === element.id && element.label === "done") {
         element.label = "todo";
         currentItem.remove();
-      } else null;
+      }
     });
     toLocal(arr);
     render();

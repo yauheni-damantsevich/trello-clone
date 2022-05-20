@@ -44,7 +44,6 @@ export function dialogCreation() {
           objCurrentData.label = "todo";
           dataItem.push(objCurrentData);
           toLocal(dataItem);
-          // toLocal(duplicateFix(filterNewItems()));
           console.log("Changes");
         } else {
           console.log("First");
